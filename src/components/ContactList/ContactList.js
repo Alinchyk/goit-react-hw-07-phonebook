@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchContacts, deleteContact } from 'redux/operations';
-import { getFilteredContact } from 'redux/selectors';
+import { getVisibleContacts } from 'redux/selectors';
 import s from './ContactList.module.css';
 
 const ContactList = () => {
-  const contacts = useSelector(getFilteredContact);
+  const contacts = useSelector(getVisibleContacts);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -13,6 +13,7 @@ const ContactList = () => {
   }, [dispatch]);
 
   const onDelete = id => dispatch(deleteContact(id));
+
   return (
     <ul className={s.list}>
       {contacts.map(({ name, number, id }) => (

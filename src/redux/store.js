@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import phonebookReducer from './reducer';
+import { contactsReducer } from './sliceContacts';
 import logger from 'redux-logger';
 import {
   FLUSH,
@@ -12,7 +12,7 @@ import {
 
 export const store = configureStore({
   reducer: {
-    contacts: phonebookReducer,
+    contacts: contactsReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

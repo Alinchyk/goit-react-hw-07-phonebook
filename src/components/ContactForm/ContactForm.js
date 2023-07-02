@@ -1,34 +1,31 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { addContact } from 'redux/operations';
-import { getItems } from 'redux/selectors';
+import { getVisibleContacts } from 'redux/selectors';
 import s from './ContactForm.module.css';
 
 const ContactForm = () => {
+  const visibleContacts = useSelector(getVisibleContacts);
+  const dispatch = useDispatch();
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-  const isContact = useSelector(getItems);
-  const dispatch = useDispatch();
 
   const handleSubmit = e => {
     e.preventDefault();
 
-    const getContacts = isContact.map(contact =>
-      contact.name.toLocaleLowerCase()
+    const isDuplicateContact = visibleContacts.some(
+      contact =>
+        contact.name.toLowerCase() === name.toLowerCase() &&
+        contact.number === number
     );
 
-    const isGetContactAlready = getContacts.includes(name.toLocaleLowerCase());
-
-    if (isGetContactAlready) {
-      resetForm();
-      return alert(`${name} is already in contacts!`);
+    if (isDuplicateContact) {
+      alert(`${name} is already in contacts!`);
+      return;
     }
 
-    dispatch(addContact(name, number));
-    resetForm();
-  };
+    dispatch(addContact({ name, number }));
 
-  const resetForm = () => {
     setName('');
     setNumber('');
   };
@@ -42,7 +39,7 @@ const ContactForm = () => {
           type="text"
           name="name"
           value={name}
-          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+          pattern="^[a-zA-Zа-яА-Я]+([' -][a-zA-Zа-яА-Я]*)*$"
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
           onChange={e => setName(e.target.value)}
@@ -56,7 +53,7 @@ const ContactForm = () => {
           type="tel"
           name="number"
           value={number}
-          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+          pattern="[+]?[0-9]{1,4}?[-.\s]?[(]?[0-9]{1,3}?[)]?[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
           onChange={e => setNumber(e.target.value)}
